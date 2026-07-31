@@ -6,7 +6,6 @@ rm -f ~/.local/bin/sura-update
 rm -f ~/.local/share/applications/sura.desktop
 rm -f ~/.local/share/icons/hicolor/256x256/apps/sura.png
 
-# Refresh the desktop database
 update-desktop-database ~/.local/share/applications 2>/dev/null || true
 
-echo "Uninstalled Sura completely from your system."
+echo "Sura has been uninstalled successfully."
