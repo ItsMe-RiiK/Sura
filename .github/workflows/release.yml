@@ -9,25 +9,44 @@ permissions:
   contents: write
 
 jobs:
-  build-and-release:
+  build:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - name: Install base dependencies
+        run: pacman -Syu --noconfirm git
+        
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Install build dependencies
+        run: pacman -Syu --noconfirm base-devel cmake qt6-base exiv2 zip
+        
+      - name: Build and Package
+        run: |
+          chmod +x scripts/package.sh
+          ./scripts/package.sh
+          
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Sura-release
+          path: Sura-release.zip
+
+  release:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0 # Need all tags for deletion logic
+          fetch-depth: 0
           
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y qt6-base-dev qt6-base-private-dev libexiv2-dev build-essential cmake zip
-
-      - name: Make package script executable
-        run: chmod +x scripts/package.sh
-
-      - name: Build and Package
-        run: ./scripts/package.sh
-
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: Sura-release
+          
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
@@ -38,22 +57,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Get all tags that start with v, sorted by version (newest first)
           TAGS=$(git tag -l 'v*' | sort -rV)
-          
-          # Convert to array
           mapfile -t TAG_ARRAY <<< "$TAGS"
           
-          # If there are more than 2 tags, delete the older ones
           if [ ${#TAG_ARRAY[@]} -gt 2 ]; then
             for (( i=2; i<${#TAG_ARRAY[@]}; i++ )); do
               TAG_TO_DELETE="${TAG_ARRAY[$i]}"
               echo "Deleting old tag and release: $TAG_TO_DELETE"
-              
-              # Delete the release using GitHub CLI
               gh release delete "$TAG_TO_DELETE" -y || true
-              
-              # Delete the tag from the remote
               git push origin --delete "$TAG_TO_DELETE" || true
             done
           else
