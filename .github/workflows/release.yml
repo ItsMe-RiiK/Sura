@@ -1,0 +1,61 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Need all tags for deletion logic
+          
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qt6-base-dev qt6-base-private-dev libexiv2-dev build-essential cmake zip
+
+      - name: Make package script executable
+        run: chmod +x scripts/package.sh
+
+      - name: Build and Package
+        run: ./scripts/package.sh
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: Sura-release.zip
+          generate_release_notes: true
+
+      - name: Keep only 2 most recent tags and releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get all tags that start with v, sorted by version (newest first)
+          TAGS=$(git tag -l 'v*' | sort -rV)
+          
+          # Convert to array
+          mapfile -t TAG_ARRAY <<< "$TAGS"
+          
+          # If there are more than 2 tags, delete the older ones
+          if [ ${#TAG_ARRAY[@]} -gt 2 ]; then
+            for (( i=2; i<${#TAG_ARRAY[@]}; i++ )); do
+              TAG_TO_DELETE="${TAG_ARRAY[$i]}"
+              echo "Deleting old tag and release: $TAG_TO_DELETE"
+              
+              # Delete the release using GitHub CLI
+              gh release delete "$TAG_TO_DELETE" -y || true
+              
+              # Delete the tag from the remote
+              git push origin --delete "$TAG_TO_DELETE" || true
+            done
+          else
+            echo "2 or fewer tags found, nothing to delete."
+          fi
