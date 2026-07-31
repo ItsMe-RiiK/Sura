@@ -21,10 +21,13 @@ Comment=A lightweight, Qt6 based image viewer
 Exec=$HOME/.local/bin/sura %F
 Icon=$HOME/.local/share/icons/hicolor/256x256/apps/sura.png
 Terminal=false
-Categories=Graphics;Viewer;
+Categories=Image;Viewer;Graphics;
 EOF
 
 # Refresh the desktop database
 update-desktop-database ~/.local/share/applications 2>/dev/null || true
+
+# Cleanup the installation image
+rm -f icon.png
 
 echo "Installation complete! Sura is now available in your application launcher."
