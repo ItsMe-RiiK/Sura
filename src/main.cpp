@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QIcon>
+#include <QStringList>
 
 int main(int argc, char* argv[])
 {
@@ -11,6 +12,11 @@ int main(int argc, char* argv[])
   app.setWindowIcon(QIcon(":/images/icon.png"));
 
   Sura viewer;
+  
+  if (app.arguments().size() > 1) {
+    viewer.loadInitialFile(app.arguments().at(1));
+  }
+
   viewer.resize(1024, 768);
   viewer.show();
 

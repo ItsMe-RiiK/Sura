@@ -96,6 +96,14 @@ Sura::Sura(QWidget* parent) :
   quitAct->setShortcut(QKeySequence::Quit);
   connect(quitAct, &QAction::triggered, this, &QWidget::close);
 
+  QAction* zoomInAct = new QAction(QIcon::fromTheme("zoom-in"), "Zoom &In", this);
+  zoomInAct->setShortcut(QKeySequence::ZoomIn);
+  connect(zoomInAct, &QAction::triggered, this, &Sura::zoomIn);
+
+  QAction* zoomOutAct = new QAction(QIcon::fromTheme("zoom-out"), "Zoom &Out", this);
+  zoomOutAct->setShortcut(QKeySequence::ZoomOut);
+  connect(zoomOutAct, &QAction::triggered, this, &Sura::zoomOut);
+
   // Setup Menus
   QMenu* fileMenu = menuBar()->addMenu("&File");
   fileMenu->addAction(openAct);
@@ -107,6 +115,9 @@ Sura::Sura(QWidget* parent) :
   viewMenu->addAction(nextAct);
   viewMenu->addAction(prevAct);
   viewMenu->addSeparator();
+  viewMenu->addAction(zoomInAct);
+  viewMenu->addAction(zoomOutAct);
+  viewMenu->addSeparator();
   viewMenu->addAction(cropAct);
   viewMenu->addAction(applyCropAct);
   viewMenu->addAction(exifAct);
@@ -117,6 +128,8 @@ Sura::Sura(QWidget* parent) :
   toolBar->addAction(saveAct);
   toolBar->addAction(prevAct);
   toolBar->addAction(nextAct);
+  toolBar->addAction(zoomInAct);
+  toolBar->addAction(zoomOutAct);
   toolBar->addAction(cropAct);
   toolBar->addAction(applyCropAct);
   toolBar->addAction(exifAct);
@@ -129,6 +142,14 @@ void Sura::openFile()
   QString fileName = QFileDialog::getOpenFileName(
     this, "Open Image", QDir::homePath(), "Images (*.png *.xpm *.jpg *.jpeg *.bmp)"
   );
+  if (!fileName.isEmpty()) {
+    loadImage(fileName);
+    updateDirectoryList(fileName);
+  }
+}
+
+void Sura::loadInitialFile(const QString& fileName)
+{
   if (!fileName.isEmpty()) {
     loadImage(fileName);
     updateDirectoryList(fileName);
@@ -306,13 +327,32 @@ bool Sura::eventFilter(QObject* obj, QEvent* event)
         return true;
       }
     }
+    else if (event->type() == QEvent::Wheel) {
+      QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(event);
+      if (wheelEvent->angleDelta().y() > 0) {
+        zoomIn();
+      } else if (wheelEvent->angleDelta().y() < 0) {
+        zoomOut();
+      }
+      return true;
+    }
   }
   return QMainWindow::eventFilter(obj, event);
 }
 
-void Sura::zoomIn() { view->scale(1.2, 1.2); }
+void Sura::zoomIn() 
+{ 
+  if (view->transform().m11() < 20.0) {
+    view->scale(1.2, 1.2); 
+  }
+}
 
-void Sura::zoomOut() { view->scale(1 / 1.2, 1 / 1.2); }
+void Sura::zoomOut() 
+{ 
+  if (view->transform().m11() > 0.05) {
+    view->scale(1 / 1.2, 1 / 1.2); 
+  }
+}
 
 void Sura::toggleExif() { exifDock->setVisible(!exifDock->isVisible()); }
 

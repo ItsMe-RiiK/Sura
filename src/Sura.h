@@ -23,6 +23,7 @@ class Sura: public QMainWindow
 
 public:
   Sura(QWidget* parent = nullptr);
+  void loadInitialFile(const QString& fileName);
 
 protected:
   bool eventFilter(QObject* obj, QEvent* event) override;
