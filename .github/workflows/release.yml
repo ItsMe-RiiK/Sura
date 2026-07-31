@@ -17,7 +17,7 @@ jobs:
         run: pacman -Syu --noconfirm git
         
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         
       - name: Install build dependencies
         run: pacman -Syu --noconfirm base-devel cmake qt6-base exiv2 zip
@@ -28,7 +28,7 @@ jobs:
           ./scripts/package.sh
           
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Sura-release
           path: Sura-release.zip
@@ -38,12 +38,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           
       - name: Download Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: Sura-release
           
