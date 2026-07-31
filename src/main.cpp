@@ -13,12 +13,12 @@ int main(int argc, char* argv[])
 
   Sura viewer;
   
+  viewer.resize(1024, 768);
+  viewer.show();
+
   if (app.arguments().size() > 1) {
     viewer.loadInitialFile(app.arguments().at(1));
   }
-
-  viewer.resize(1024, 768);
-  viewer.show();
 
   return app.exec();
 }
