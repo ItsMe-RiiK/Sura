@@ -50,4 +50,18 @@ EOF
 # Refresh the desktop database
 update-desktop-database ~/.local/share/applications 2>/dev/null || true
 
-echo "Installation complete! Sura is now available in your application launcher."
+echo ""
+if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+    echo -e "\033[0;33mWARNING: \$HOME/.local/bin is not in your PATH.\033[0m"
+    echo -e "To use the 'sura' command from anywhere, add this line to your ~/.bashrc or ~/.zshrc:"
+    echo -e "  export PATH=\"\$HOME/.local/bin:\$PATH\""
+    echo ""
+fi
+
+echo -e "\033[0;32mSura has been successfully installed!\033[0m"
+echo "Sura is now available in your application launcher."
+echo "The binaries are located at:"
+echo "  - Main App    : $HOME/.local/bin/sura"
+echo "  - Updater     : $HOME/.local/bin/sura-update"
+echo "  - Uninstaller : $HOME/.local/bin/sura-uninstall"
+echo ""
