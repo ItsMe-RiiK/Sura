@@ -35,11 +35,24 @@ jobs:
           echo "major=$MAJOR" >> $GITHUB_OUTPUT
           
       - name: Create Release
-        uses: softprops/action-gh-release@v3
-        with:
-          name: "Sura v${{ steps.get_major.outputs.major }}"
-          files: Sura-*.AppImage
-          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          
+          # Find the exact previous semantic tag
+          PREV_TAG=$(git tag -l 'v*' | sort -rV | grep -A 1 "^$TAG$" | tail -n 1)
+          
+          # If this is the very first tag, don't supply a start tag
+          if [ "$PREV_TAG" = "$TAG" ] || [ -z "$PREV_TAG" ]; then
+            NOTES_FLAG=""
+          else
+            NOTES_FLAG="--notes-start-tag $PREV_TAG"
+          fi
+          
+          gh release create "$TAG" Sura-*.AppImage \
+            --title "Sura v${{ steps.get_major.outputs.major }}" \
+            --generate-notes $NOTES_FLAG
 
       - name: Keep 2 most recent releases per Major Version
         env:
