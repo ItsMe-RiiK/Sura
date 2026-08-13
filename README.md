@@ -15,7 +15,7 @@ curl -sL https://raw.githubusercontent.com/ItsMe-RiiK/sura/main/scripts/install.
 
 This will automatically download the latest Sura AppImage, install it to your user directory, and set up the application launcher. You can now launch Sura from your application menu or by typing `sura` in your terminal!
 
-*(To uninstall, simply run `curl -sL https://raw.githubusercontent.com/ItsMe-RiiK/sura/main/scripts/uninstall.sh | bash`)*
+*(To uninstall, simply open your terminal and run `sura-uninstall`)*
 
 ## Updating Sura
 
