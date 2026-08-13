@@ -1,8 +1,20 @@
 cmake_minimum_required(VERSION 3.16)
-project(Sura VERSION 1.0 LANGUAGES CXX)
+project(Sura VERSION 2.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Dynamically get version from git tag
+execute_process(COMMAND git describe --tags --abbrev=0
+                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                OUTPUT_VARIABLE GIT_VERSION
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+                ERROR_QUIET)
+if (NOT GIT_VERSION)
+    set(GIT_VERSION "v2.0.0")
+endif()
+
+add_compile_definitions(SURA_VERSION="${GIT_VERSION}")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_AUTOMOC ON)
