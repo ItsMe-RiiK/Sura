@@ -5,14 +5,44 @@
 #include <QStyle>
 #include <QStyleFactory>
 #include <QStyleHints>
+#include <QProcess>
 
 namespace Theme {
+
+bool isSystemDarkMode() {
+    // 1. Standard Qt method (works if platform theme plugin is available)
+    if (QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark) {
+        return true;
+    }
+
+    // 2. Linux-specific fallback (especially for AppImages lacking the portal plugin)
+#ifdef Q_OS_LINUX
+    QProcess process;
+    process.start("dbus-send", QStringList()
+        << "--print-reply=literal"
+        << "--dest=org.freedesktop.portal.Desktop"
+        << "/org/freedesktop/portal/desktop"
+        << "org.freedesktop.portal.Settings.Read"
+        << "string:org.freedesktop.appearance"
+        << "string:color-scheme");
+        
+    if (process.waitForFinished(500)) {
+        QString output = process.readAllStandardOutput();
+        // Freedesktop spec: 1 means prefer dark appearance
+        if (output.contains("uint32 1")) {
+            return true;
+        }
+    }
+#endif
+
+    return false;
+}
 
   void apply(QApplication& app)
   {
     app.setStyle(QStyleFactory::create("Fusion"));
 
-    if (QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark) {
+    if (isSystemDarkMode()) {
       QPalette darkPalette;
       darkPalette.setColor(QPalette::Window, QColor(53, 53, 53));
       darkPalette.setColor(QPalette::WindowText, Qt::white);
