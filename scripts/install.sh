@@ -2,32 +2,34 @@
 set -e
 echo "Installing Sura..."
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-# Check if we are installing from a release package (files are alongside the script)
-if [ -f "$SCRIPT_DIR/Sura" ] && [ -f "$SCRIPT_DIR/update.sh" ] && [ -f "$SCRIPT_DIR/icon.png" ]; then
-    SURA_BIN="$SCRIPT_DIR/Sura"
-    UPDATER_SCRIPT="$SCRIPT_DIR/update.sh"
-    ICON_FILE="$SCRIPT_DIR/icon.png"
-# Check if we are installing from source (assuming typical directory structure)
-elif [ -f "$SCRIPT_DIR/../build/Sura" ] && [ -f "$SCRIPT_DIR/update.sh" ] && [ -f "$SCRIPT_DIR/../resources/images/icon.png" ]; then
-    SURA_BIN="$SCRIPT_DIR/../build/Sura"
-    UPDATER_SCRIPT="$SCRIPT_DIR/update.sh"
-    ICON_FILE="$SCRIPT_DIR/../resources/images/icon.png"
-else
-    echo "Error: Cannot find required files for installation."
-    echo "If you are installing from source, ensure you have compiled Sura first (e.g., cmake -B build && cmake --build build)"
-    exit 1
-fi
+REPO="ItsMe-RiiK/Sura"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" 2>/dev/null && pwd || echo "" )"
 
 # Create standard user directories if they don't exist
 mkdir -p ~/.local/bin ~/.local/share/applications ~/.local/share/icons/hicolor/256x256/apps
 
-# Copy binary, updater, and icon
-cp "$SURA_BIN" ~/.local/bin/sura
-cp "$UPDATER_SCRIPT" ~/.local/bin/sura-update
+if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/../build/Sura" ]; then
+    echo "Installing from local source build..."
+    cp "$SCRIPT_DIR/../build/Sura" ~/.local/bin/sura
+    cp "$SCRIPT_DIR/update.sh" ~/.local/bin/sura-update
+    cp "$SCRIPT_DIR/../resources/images/icon.png" ~/.local/share/icons/hicolor/256x256/apps/sura.png
+else
+    echo "Fetching latest AppImage from GitHub..."
+    LATEST_RELEASE_URL=$(curl -s "https://api.github.com/repos/$REPO/releases/latest" | grep "browser_download_url.*Sura-.*\.AppImage" | cut -d : -f 2,3 | tr -d \" | xargs)
+    if [ -z "$LATEST_RELEASE_URL" ]; then
+        echo "Error: Could not find the latest AppImage release."
+        exit 1
+    fi
+    curl -L -o ~/.local/bin/sura "$LATEST_RELEASE_URL"
+    curl -sL "https://raw.githubusercontent.com/$REPO/main/scripts/update.sh" -o ~/.local/bin/sura-update
+    curl -sL "https://raw.githubusercontent.com/$REPO/main/resources/images/icon.png" -o ~/.local/share/icons/hicolor/256x256/apps/sura.png
+fi
+
+chmod +x ~/.local/bin/sura
 chmod +x ~/.local/bin/sura-update
-cp "$ICON_FILE" ~/.local/share/icons/hicolor/256x256/apps/sura.png
+
+# Set custom file icon for the binary using gio
+gio set ~/.local/bin/sura metadata::custom-icon "file://$HOME/.local/share/icons/hicolor/256x256/apps/sura.png" 2>/dev/null || true
 
 # Generate the desktop file dynamically
 cat <<EOF > ~/.local/share/applications/sura.desktop
@@ -37,7 +39,7 @@ Type=Application
 Name=Sura
 Comment=A lightweight, Qt6 based image viewer
 Exec=$HOME/.local/bin/sura %F
-Icon=$HOME/.local/share/icons/hicolor/256x256/apps/sura.png
+Icon=sura
 Terminal=false
 Categories=Image;Viewer;Graphics;
 EOF

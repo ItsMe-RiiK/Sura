@@ -8,4 +8,4 @@ rm -f ~/.local/share/icons/hicolor/256x256/apps/sura.png
 
 update-desktop-database ~/.local/share/applications 2>/dev/null || true
 
-echo "Sura has been uninstalled successfully."
+echo "Sura has been completely uninstalled."
