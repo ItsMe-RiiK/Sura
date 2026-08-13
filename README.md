@@ -9,7 +9,7 @@ Sura is a sleek, modern, and lightweight image viewer built for Linux (supportin
 
 ## Download and Install (Pre-compiled)
 
-Sura is distributed as a portable AppImage. You can install it directly from your terminal using our web installer script:
+Sura distributed as a portable AppImage. You can install it directly from your terminal using our web installer script:
 
 ```bash
 curl -sL https://raw.githubusercontent.com/ItsMe-RiiK/sura/main/scripts/install.sh | bash
