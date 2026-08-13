@@ -3,7 +3,7 @@
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Linux-brightgreen.svg)
 
-Sura is a sleek, modern, and lightweight image viewer built for Linux (supporting both X11 and Wayland) using Qt 6. It features EXIF data inspection, smart-edge cropping, and a minimalist interface.
+Sura is a sleek, modern, and lightweight image viewer built for Linux (supporting both X11 and Wayland) using Qt 6. It features EXIF data inspection, smart-edge cropping, automatic Dark/Light mode detection, and a minimalist interface.
 
 ## Download and Install (Pre-compiled)
 
@@ -15,14 +15,24 @@ curl -sL https://raw.githubusercontent.com/ItsMe-RiiK/sura/main/scripts/install.
 
 This will automatically download the latest Sura AppImage, install it to your user directory, and set up the application launcher. You can now launch Sura from your application menu or by typing `sura` in your terminal!
 
-*(To uninstall, simply open your terminal and run `sura-uninstall`)*
+*(To uninstall, simply open your terminal and run `sura --uninstall`)*
 
 ## Updating Sura
 
 Sura comes with a built-in automated updater that fetches the latest release from GitHub. Whenever you want to upgrade, just open your terminal and run:
 ```bash
-sura-update
+sura --update
 ```
+
+## Command Line Interface (CLI)
+
+Sura natively supports command-line arguments:
+
+- `sura` : Launch the application GUI
+- `sura /path/to/image.jpg` : Open an image directly
+- `sura --help` or `-h` : Show help message
+- `sura --update` : Update to the latest version
+- `sura --uninstall` : Uninstall the application
 
 ## Compile from Source
 
@@ -36,8 +46,8 @@ If you prefer to build from source, follow these steps:
 
 2. **Clone the Repository**
    ```bash
-   git clone https://github.com/yourusername/sura.git
-   cd sura
+   git clone https://github.com/ItsMe-RiiK/Sura.git
+   cd Sura
    ```
 
 3. **Build**
