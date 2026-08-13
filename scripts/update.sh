@@ -25,5 +25,7 @@ gio set ~/.local/bin/sura metadata::custom-icon "file://$HOME/.local/share/icons
 # Update the updater script itself
 curl -sL "https://raw.githubusercontent.com/$REPO/main/scripts/update.sh" -o ~/.local/bin/sura-update
 chmod +x ~/.local/bin/sura-update
+curl -sL "https://raw.githubusercontent.com/$REPO/main/scripts/uninstall.sh" -o ~/.local/bin/sura-uninstall
+chmod +x ~/.local/bin/sura-uninstall
 
 echo "Sura has been successfully updated to the latest version!"
