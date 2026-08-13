@@ -32,20 +32,29 @@ jobs:
           files: Sura-*.AppImage
           generate_release_notes: true
 
-      - name: Keep only 2 most recent tags and releases
+      - name: Keep 2 most recent releases per Major Version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAGS=$(git tag -l 'v*' | sort -rV)
-          mapfile -t TAG_ARRAY <<< "$TAGS"
+          declare -A MAJOR_COUNTS
           
-          if [ ${#TAG_ARRAY[@]} -gt 2 ]; then
-            for (( i=2; i<${#TAG_ARRAY[@]}; i++ )); do
-              TAG_TO_DELETE="${TAG_ARRAY[$i]}"
-              echo "Deleting old tag and release: $TAG_TO_DELETE"
-              gh release delete "$TAG_TO_DELETE" -y || true
-              git push origin --delete "$TAG_TO_DELETE" || true
-            done
-          else
-            echo "2 or fewer tags found, nothing to delete."
-          fi
+          for TAG in $TAGS; do
+            VERSION_NUM="${TAG#v}"
+            MAJOR="${VERSION_NUM%%.*}"
+            
+            if [ -z "${MAJOR_COUNTS[$MAJOR]}" ]; then
+              MAJOR_COUNTS[$MAJOR]=0
+            fi
+            
+            COUNT=${MAJOR_COUNTS[$MAJOR]}
+            MAJOR_COUNTS[$MAJOR]=$((COUNT + 1))
+            
+            if [ ${MAJOR_COUNTS[$MAJOR]} -gt 2 ]; then
+              echo "Deleting old release: $TAG (Major Version $MAJOR already has 2 newest releases)"
+              gh release delete "$TAG" -y || true
+              git push origin --delete "$TAG" || true
+            else
+              echo "Save release: $TAG (Major Version $MAJOR, newest release no. ${MAJOR_COUNTS[$MAJOR]})
+            fi
+          done
