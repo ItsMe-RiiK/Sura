@@ -26,9 +26,18 @@ jobs:
         with:
           name: Sura-AppImage
           
+      - name: Extract Major Version
+        id: get_major
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          VERSION_NUM="${TAG#v}"
+          MAJOR="${VERSION_NUM%%.*}"
+          echo "major=$MAJOR" >> $GITHUB_OUTPUT
+          
       - name: Create Release
         uses: softprops/action-gh-release@v3
         with:
+          name: "Sura v${{ steps.get_major.outputs.major }}"
           files: Sura-*.AppImage
           generate_release_notes: true
 
@@ -55,6 +64,6 @@ jobs:
               gh release delete "$TAG" -y || true
               git push origin --delete "$TAG" || true
             else
-              echo "Save release: $TAG (Major Version $MAJOR, newest release no. ${MAJOR_COUNTS[$MAJOR]})
+              echo "Save release: $TAG (Major Version $MAJOR, newest release no. ${MAJOR_COUNTS[$MAJOR]})"
             fi
           done
