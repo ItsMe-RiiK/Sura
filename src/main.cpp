@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
   app.setWindowIcon(QIcon(":/images/icon.png"));
 
   Sura viewer;
-  
+
   viewer.resize(1024, 768);
   viewer.show();
 

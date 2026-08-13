@@ -331,7 +331,8 @@ bool Sura::eventFilter(QObject* obj, QEvent* event)
       QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(event);
       if (wheelEvent->angleDelta().y() > 0) {
         zoomIn();
-      } else if (wheelEvent->angleDelta().y() < 0) {
+      }
+      else if (wheelEvent->angleDelta().y() < 0) {
         zoomOut();
       }
       return true;
@@ -340,17 +341,17 @@ bool Sura::eventFilter(QObject* obj, QEvent* event)
   return QMainWindow::eventFilter(obj, event);
 }
 
-void Sura::zoomIn() 
-{ 
+void Sura::zoomIn()
+{
   if (view->transform().m11() < 20.0) {
-    view->scale(1.2, 1.2); 
+    view->scale(1.2, 1.2);
   }
 }
 
-void Sura::zoomOut() 
-{ 
+void Sura::zoomOut()
+{
   if (view->transform().m11() > 0.05) {
-    view->scale(1 / 1.2, 1 / 1.2); 
+    view->scale(1 / 1.2, 1 / 1.2);
   }
 }
 
