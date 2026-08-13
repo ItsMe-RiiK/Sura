@@ -7,20 +7,15 @@ Sura is a sleek, modern, and lightweight image viewer built for Linux (supportin
 
 ## Download and Install (Pre-compiled)
 
-1. Go to the [Releases](https://github.com/ItsMe-RiiK/sura/releases) page.
-2. Download the latest `Sura-release.zip`.
-3. Extract the ZIP file:
-   ```bash
-   unzip Sura-release.zip
-   cd Sura
-   ```
-4. Run the installer script to install Sura to your desktop environment:
-   ```bash
-   ./install.sh
-   ```
-5. You can now launch Sura from your application menu or by typing `sura` in your terminal!
+Sura is distributed as a portable AppImage. You can install it directly from your terminal using our web installer script:
 
-*(To uninstall, simply run `./uninstall.sh`)*
+```bash
+curl -sL https://raw.githubusercontent.com/ItsMe-RiiK/sura/main/scripts/install.sh | bash
+```
+
+This will automatically download the latest Sura AppImage, install it to your user directory, and set up the application launcher. You can now launch Sura from your application menu or by typing `sura` in your terminal!
+
+*(To uninstall, simply run `curl -sL https://raw.githubusercontent.com/ItsMe-RiiK/sura/main/scripts/uninstall.sh | bash`)*
 
 ## Updating Sura
 
@@ -36,7 +31,7 @@ If you prefer to build from source, follow these steps:
 1. **Install Dependencies**
    Make sure you have a C++ compiler, CMake, Qt 6, and Exiv2 installed.
    ```bash
-   sudo pacman -S base-devel cmake qt6-base exiv2
+   sudo pacman -S base-devel cmake qt6-base qt6-wayland exiv2
    ```
 
 2. **Clone the Repository**
