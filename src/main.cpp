@@ -5,6 +5,10 @@
 #include <QApplication>
 #include <QIcon>
 
+#ifndef SURA_VERSION
+  #define SURA_VERSION "vUnknown"
+#endif
+
 int main(int argc, char* argv[])
 {
   QApplication app(argc, argv);
@@ -23,6 +27,7 @@ int main(int argc, char* argv[])
   Sura viewer;
 
   viewer.resize(1024, 768);
+  viewer.setWindowTitle(QString("Sura %1").arg(SURA_VERSION));
   viewer.show();
 
   if (app.arguments().size() > 1) {

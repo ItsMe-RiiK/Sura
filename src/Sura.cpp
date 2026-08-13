@@ -156,6 +156,10 @@ void Sura::loadInitialFile(const QString& fileName)
   }
 }
 
+#ifndef SURA_VERSION
+  #define SURA_VERSION "vUnknown"
+#endif
+
 bool Sura::saveImage()
 {
   if (currentImage.isNull())
@@ -166,7 +170,7 @@ bool Sura::saveImage()
   if (!fileName.isEmpty()) {
     if (currentImage.save(fileName)) {
       currentFile = fileName;
-      setWindowTitle(QFileInfo(fileName).fileName() + " - sura");
+      setWindowTitle(QFileInfo(fileName).fileName() + QString(" - Sura %1").arg(SURA_VERSION));
       isUnsaved = false;
       updateDirectoryList(currentFile);
       return true;
@@ -200,6 +204,12 @@ void Sura::updateDirectoryList(const QString& fileName)
 
 void Sura::loadImage(const QString& fileName)
 {
+  QFileInfo fileInfo(fileName);
+  if (!fileInfo.isFile()) {
+    QMessageBox::warning(this, "Security Warning", "The selected path is not a regular file.");
+    return;
+  }
+
   if (currentImage.load(fileName)) {
     if (pixmapItem) {
       scene->removeItem(pixmapItem);
@@ -209,7 +219,7 @@ void Sura::loadImage(const QString& fileName)
     scene->setSceneRect(pixmapItem->boundingRect());
     view->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
     currentFile = fileName;
-    setWindowTitle(QFileInfo(fileName).fileName() + " - sura");
+    setWindowTitle(QFileInfo(fileName).fileName() + QString(" - Sura %1").arg(SURA_VERSION));
 
     loadExif(fileName);
   }
@@ -388,12 +398,16 @@ void Sura::loadExif(const QString& fileName)
       }
 
       html += QString("<tr><td style='padding-right: 15px;'><b>%1</b></td><td>%2</td></tr>")
-                .arg(QString::fromStdString(keyName))
-                .arg(value);
+                .arg(QString::fromStdString(keyName).toHtmlEscaped())
+                .arg(value.toHtmlEscaped());
     }
     html += "</table>";
     exifTextEdit->setHtml(html);
-  } catch (Exiv2::Error& e) {
+  } catch (const Exiv2::Error& e) {
     exifTextEdit->setText(QString("Error reading EXIF: %1").arg(e.what()));
+  } catch (const std::exception& e) {
+    exifTextEdit->setText(QString("Exception parsing EXIF metadata: %1").arg(e.what()));
+  } catch (...) {
+    exifTextEdit->setText("Unknown error occurred while parsing EXIF metadata.");
   }
 }
