@@ -4,6 +4,7 @@
 #include <QIcon>
 #include <QPalette>
 #include <QStringList>
+#include <QStyle>
 #include <QStyleFactory>
 #include <QStyleHints>
 
@@ -42,7 +43,6 @@ int main(int argc, char* argv[])
 
   applyTheme(app);
 
-  // Auto-update theme if user changes system setting while app is running
   QObject::connect(
     QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged, &app,
     [&app](Qt::ColorScheme) { applyTheme(app); }
