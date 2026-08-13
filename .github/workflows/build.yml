@@ -29,30 +29,19 @@ jobs:
           
       - name: Build AppImage
         run: |
-          # Download linuxdeploy and linuxdeploy-plugin-qt (Standard for Qt6)
           wget -c -nv "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
           wget -c -nv "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage"
           chmod a+x linuxdeploy*.AppImage
           
-          # Prepare AppDir
           mkdir -p AppDir/usr/bin AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/256x256/apps
           cp build/Sura AppDir/usr/bin/sura
           cp resources/images/icon.png AppDir/usr/share/icons/hicolor/256x256/apps/sura.png
           
-          # Create Desktop file
-          cat <<EOF > AppDir/usr/share/applications/sura.desktop
-          [Desktop Entry]
-          Name=Sura
-          Exec=sura %F
-          Icon=sura
-          Type=Application
-          Categories=Graphics;
-          EOF
+          cp resources/sura.desktop AppDir/usr/share/applications/sura.desktop
           
           export VERSION=$(git describe --tags --always || echo "latest")
           export EXTRA_QT_PLUGINS=wayland
           
-          # Build AppImage
           ./linuxdeploy-x86_64.AppImage \
             --appdir AppDir \
             --plugin qt \

@@ -16,6 +16,10 @@ add_executable(Sura
     src/main.cpp
     src/Sura.cpp
     src/Sura.h
+    src/Cli.cpp
+    src/Cli.h
+    src/Theme.cpp
+    src/Theme.h
     src/CropBoxItem.cpp
     src/CropBoxItem.h
     resources/resources.qrc

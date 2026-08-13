@@ -1,9 +1,9 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=sura
+Name=Sura
 Comment=A lightweight, Qt6 based image viewer
-Exec=/home/riik/Projects/Sura/build/Sura %F
-Icon=/home/riik/Projects/Sura/resources/images/icon.png
+Exec=sura %F
+Icon=sura
 Terminal=false
 Categories=Graphics;Viewer;
