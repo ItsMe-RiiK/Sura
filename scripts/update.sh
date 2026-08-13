@@ -15,17 +15,21 @@ fi
 
 echo "Found latest release! Updating..."
 
-# Download the AppImage directly to ~/.local/bin/sura
-curl -L -o ~/.local/bin/sura "$LATEST_RELEASE_URL"
-chmod +x ~/.local/bin/sura
+# Download to temporary files to prevent corrupted binaries on network failure
+curl -L --fail -o ~/.local/bin/sura.tmp "$LATEST_RELEASE_URL"
+chmod +x ~/.local/bin/sura.tmp
+mv ~/.local/bin/sura.tmp ~/.local/bin/sura
 
 # Make sure icon metadata is preserved
 gio set ~/.local/bin/sura metadata::custom-icon "file://$HOME/.local/share/icons/hicolor/256x256/apps/sura.png" 2>/dev/null || true
 
-# Update the updater script itself
-curl -sL "https://raw.githubusercontent.com/$REPO/main/scripts/update.sh" -o ~/.local/bin/sura-update
-chmod +x ~/.local/bin/sura-update
-curl -sL "https://raw.githubusercontent.com/$REPO/main/scripts/uninstall.sh" -o ~/.local/bin/sura-uninstall
-chmod +x ~/.local/bin/sura-uninstall
+# Update the updater scripts safely
+curl -sL --fail "https://raw.githubusercontent.com/$REPO/main/scripts/update.sh" -o ~/.local/bin/sura-update.tmp
+chmod +x ~/.local/bin/sura-update.tmp
+mv ~/.local/bin/sura-update.tmp ~/.local/bin/sura-update
+
+curl -sL --fail "https://raw.githubusercontent.com/$REPO/main/scripts/uninstall.sh" -o ~/.local/bin/sura-uninstall.tmp
+chmod +x ~/.local/bin/sura-uninstall.tmp
+mv ~/.local/bin/sura-uninstall.tmp ~/.local/bin/sura-uninstall
 
 echo "Sura has been successfully updated to the latest version!"

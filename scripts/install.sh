@@ -21,10 +21,17 @@ else
         echo "Error: Could not find the latest AppImage release."
         exit 1
     fi
-    curl -L -o ~/.local/bin/sura "$LATEST_RELEASE_URL"
-    curl -sL "https://raw.githubusercontent.com/$REPO/main/scripts/update.sh" -o ~/.local/bin/sura-update
-    curl -sL "https://raw.githubusercontent.com/$REPO/main/scripts/uninstall.sh" -o ~/.local/bin/sura-uninstall
-    curl -sL "https://raw.githubusercontent.com/$REPO/main/resources/images/icon.png" -o ~/.local/share/icons/hicolor/256x256/apps/sura.png
+    echo "Downloading components..."
+    curl -L --fail -o ~/.local/bin/sura.tmp "$LATEST_RELEASE_URL"
+    curl -sL --fail "https://raw.githubusercontent.com/$REPO/main/scripts/update.sh" -o ~/.local/bin/sura-update.tmp
+    curl -sL --fail "https://raw.githubusercontent.com/$REPO/main/scripts/uninstall.sh" -o ~/.local/bin/sura-uninstall.tmp
+    curl -sL --fail "https://raw.githubusercontent.com/$REPO/main/resources/images/icon.png" -o ~/.local/share/icons/hicolor/256x256/apps/sura.png.tmp
+    
+    # Atomic moves ensure we don't leave corrupted files if download fails
+    mv ~/.local/bin/sura.tmp ~/.local/bin/sura
+    mv ~/.local/bin/sura-update.tmp ~/.local/bin/sura-update
+    mv ~/.local/bin/sura-uninstall.tmp ~/.local/bin/sura-uninstall
+    mv ~/.local/share/icons/hicolor/256x256/apps/sura.png.tmp ~/.local/share/icons/hicolor/256x256/apps/sura.png
 fi
 
 chmod +x ~/.local/bin/sura
