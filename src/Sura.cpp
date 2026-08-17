@@ -140,7 +140,7 @@ void Sura::openFile()
   if (!maybeSave())
     return;
   QString fileName = QFileDialog::getOpenFileName(
-    this, "Open Image", QDir::homePath(), "Images (*.png *.xpm *.jpg *.jpeg *.bmp)"
+    this, "Open Image", QDir::homePath(), "Images (*.png *.xpm *.jpg *.jpeg *.bmp *.svg)"
   );
   if (!fileName.isEmpty()) {
     loadImage(fileName);
@@ -165,7 +165,7 @@ bool Sura::saveImage()
   if (currentImage.isNull())
     return true;
   QString fileName = QFileDialog::getSaveFileName(
-    this, "Save Image As", currentFile, "Images (*.png *.xpm *.jpg *.jpeg *.bmp)"
+    this, "Save Image As", currentFile, "Images (*.png *.xpm *.jpg *.jpeg *.bmp *.svg)"
   );
   if (!fileName.isEmpty()) {
     if (currentImage.save(fileName)) {
@@ -188,7 +188,7 @@ void Sura::updateDirectoryList(const QString& fileName)
   QDir      dir = fileInfo.dir();
 
   QStringList filters;
-  filters << "*.png" << "*.xpm" << "*.jpg" << "*.jpeg" << "*.bmp";
+  filters << "*.png" << "*.xpm" << "*.jpg" << "*.jpeg" << "*.bmp" << "*.svg";
 
   QFileInfoList fileList = dir.entryInfoList(filters, QDir::Files, QDir::Name);
   currentDirectoryFiles.clear();
