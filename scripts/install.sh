@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-echo "Installing Sura..."
+echo -e "\033[33mInstalling Sura...\033[0m"
 
 REPO="ItsMe-RiiK/Sura"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" 2>/dev/null && pwd || echo "" )"
