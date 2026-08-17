@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(Sura VERSION 2.0.0 LANGUAGES CXX)
+project(Sura VERSION 2.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -11,7 +11,7 @@ execute_process(COMMAND git describe --tags --abbrev=0
                 OUTPUT_STRIP_TRAILING_WHITESPACE
                 ERROR_QUIET)
 if (NOT GIT_VERSION)
-    set(GIT_VERSION "v2.0.0")
+    set(GIT_VERSION "v2.1.0")
 endif()
 
 add_compile_definitions(SURA_VERSION="${GIT_VERSION}")
@@ -21,7 +21,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
+find_package(Qt6 COMPONENTS Core Gui Widgets Svg SvgWidgets REQUIRED)
 find_package(exiv2 REQUIRED)
 
 add_executable(Sura
@@ -41,5 +41,7 @@ target_link_libraries(Sura PRIVATE
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets
+    Qt6::Svg
+    Qt6::SvgWidgets
     exiv2lib
 )

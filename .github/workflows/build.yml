@@ -23,6 +23,7 @@ jobs:
         uses: jurplel/install-qt-action@v3
         with:
           version: '6.5.0'
+          modules: 'qtsvg'
           
       - name: Build Sura
         run: |
@@ -42,7 +43,7 @@ jobs:
           cp resources/sura.desktop AppDir/usr/share/applications/sura.desktop
           
           export VERSION=$(git describe --tags --always || echo "latest")
-          export EXTRA_QT_PLUGINS=wayland
+          export EXTRA_QT_PLUGINS=wayland,svg
           
           ./linuxdeploy-x86_64.AppImage \
             --appdir AppDir \
